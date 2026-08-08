@@ -1,5 +1,11 @@
+import "dotenv/config";
+
 import mongoose from "mongoose"
 import dotenv from "dotenv"
+
+
+import app from "./app.js";
+import dns from "dns"; dns.setServers([ "8.8.8.8", "8.8.4.4" ]);
 import {DB_NAME} from "./constants.js"
 /*( async () => {
     try{
@@ -18,7 +24,7 @@ import {DB_NAME} from "./constants.js"
 }
 )*/
 import connectDB from "./db/index.js"
-dotenv.config()
+
 
 connectDB()
 .then(() => {
