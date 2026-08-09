@@ -168,10 +168,26 @@ if(refresh){
     throw new ApiError(401, "Unauthorized: No refresh token provided");
 
 }
+const decodedtoken=jwt.verify(refresh,process.env.REFRESH_TOKEN_SECRET)
+const user= await User.findById(decodedtoken?._id)
+if(!user){
+    throw new ApiError(404, "User not found")
+}
+if(user.refreshToken !== refresh){
+    throw new ApiError(401, "Unauthorized: Invalid refresh token")  
+}
+const options={
+    httpOnly:true,
+    secure:true
+}
+const {accessToken,newrefreshToken}=await generateAccessandRefreshTokens(user._id)
+return res.status(200).cookie("refreshToken",newrefreshToken,options).cookie("accessToken",accessToken,options).json(new ApiResponse(200,null,"Access token refreshed successfully"))
+
+
 })
 
 
 export {
     registerUser,
-    loginuser,logout
+    loginuser,logout,refreshAccessToken
 };
